@@ -182,6 +182,8 @@ docker ps
 docker compose down
 docker ps
 ```
+![docker_ps](/iceberg-platform/image/docker_ps.png)
+
 3. Pinned URL  
 - Minio: http://localhost:9001/login (Required username, password: Please refer to file ```docker-compose.yml```)
 - Nessie: http://localhost:19120/tree/main
