@@ -1,0 +1,3 @@
+ivy-cache/
+.ivy2/
+*.jar
