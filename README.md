@@ -1,42 +1,39 @@
 # Modern Data Platform with Apache Iceberg
 
-Written by Ariya Phengphon  
-A scalable Lakehouse architecture using Apache Iceberg, Spark, Trino, and Nessie.
+**Author:** Ariya Phengphon  
+**Objective:** Design and implement a scalable, cost-efficient data platform supporting Apache Iceberg at terabyte scale.
+**Table Format:** Apache Iceberg
 
 ---
 
 ## Table of Contents
 
-- [1. Problem Statement](#1-problem-statement)
+- [1. Executive Summary](#1-executive-summary)
 - [2. Architecture Overview](#2-architecture-overview)
   - [2.1 Why This Architecture](#21-why-this-architecture)
   - [2.2 Architecture Components](#22-architecture-components)
   - [2.3 Architecture Diagram](#23-architecture-diagram)
-- [4. Data Flow Overview](#4-data-flow-overview)
-- [5. ETL & Query data Demonstration](#5-etl--query-data-demonstration)
-    - [5.1 Perform ETL using Spark](#51-perform-etl-using-spark)
-    - [5.2 Connect to Trino & Query data](#52-connect-to-trino--query-data)
-- [6. Cost Awareness Justification](#6-cost-awareness-justification)
-- [7. Future Improvements](#7-future-improvements)
-- [8. Setup & Installation](#8-setup--installation)
-<!-- - [9. Versioning & Governance](#9-versioning--governance)
-- [10. Failure & Recovery Strategy](#10-failure--recovery-strategy) -->
-<!-- - [11. Future Improvements](#11-future-improvements) -->
+- [3. Data Flow Overview](#3-data-flow-overview)
+- [4. ETL & Query data Demonstration](#4-etl--query-data-demonstration)
+    - [4.1 Perform ETL using Spark](#41-perform-etl-using-spark)
+    - [4.2 Connect to Trino & Query data](#42-connect-to-trino--query-data)
+- [5. Cost Awareness Justification](#5-cost-awareness-justification)
+- [6. Future Improvements](#6-future-improvements)
+- [7. Setup & Installation](#7-setup--installation)
 
 ---
 
-# 1. Problem Statement
-Design and implement a scalable data platform that:
+# 1. Executive Summary
+This document proposes a scalable, cost-efficient modern data platform designed to:
 
-- Uses **Apache Iceberg** as the main table format
-- Supports **terabyte-scale datasets**
-- Handles multiple query patterns:
-  - Scheduled reporting
-  - Hourly monitoring workloads
-- Supports **~100 concurrent queries per reporting request**
-- Demonstrates one ETL pipeline storing data as Iceberg tables
-- Allows users to connect and query the platform
-- Maintains cost awareness
+- Support analytical workloads at **terabyte scale** while maintaining cost efficiency and operational simplicity.
+- Handle **~100 concurrent analytical queries**
+- Serve both **scheduled reporting** and **hourly monitoring workloads**
+- Use **Apache Iceberg** as the primary table format
+- Enable transactional consistency, schema evolution, and time travel
+- Remain cost-aware and production extensible
+
+The platform adopts a **Lakehouse architecture** built on open-source technologies, ensuring flexibility and scalability.
 
 ---
 
@@ -75,7 +72,7 @@ This architecture ensures scalability, consistency, and cost efficiency.
 
 ---
 
-# 4. Data Flow Overview
+# 3. Data Flow Overview
 
 1. Data is ingested from external sources via **Apache Spark**.
 2. Raw data is stored in the **Bronze** namespace as Iceberg tables.
@@ -84,15 +81,15 @@ This architecture ensures scalability, consistency, and cost efficiency.
 5. **Trino** queries Iceberg tables for BI and analytics.
 6. **BI tools** connect to Trino for reporting. In this project, user will use Dbeaver to query and analyze queries.
 
-# 5. ETL & Query data Demonstration
+# 4. ETL & Query data Demonstration
 
-## 5.1 Perform ETL using Spark
+## 4.1 Perform ETL using Spark
 You can perform the ETL using Spark on each layer.
 - Bronze: Pull from sources direcrly without transformation.
-- Silver: Transform date to YYYY-MM-DD format, cast type, rename column.
+- Silver: Transform date to YYYY-MM-DD format, cast type, and rename column.
 - Gold: Aggregate data based on business logic to be used in analytic and dashboard.
 
-Example: Find the highest total_profit summation.
+**Example:** Find the highest summation of total_profit across the sales date.
 
 1. Creating Gold Aggregation Table (Refer to this file: ```iceberg-platform/spark/etl_gold.py```)
 
@@ -128,14 +125,14 @@ docker exec -it spark \
 ```
 ![ETL Output](/iceberg-platform/image/etl_output.png)
 
-## 5.2 Connect to Trino & Query data
-1. Download DBeaver program and add "Trino" as data source. Click test connection to check the connectivity.
+## 4.2 Connect to Trino & Query data
+1. Download DBeaver program and add "Trino" as a datasource. Click test connection to check the connectivity before creating it.
 ![Connect Trino on DBeaver](/iceberg-platform/image/connect_trino_dbeaver.png)
 2. Query data and result.
 ![Query data](/iceberg-platform/image/query_data_result.png)
 
 ---
-# 6. Cost Awareness Justification
+# 5. Cost Awareness Justification
 
 - **Cost-Effective Storage:** Object storage (MinIO/S3) is significantly cheaper than traditional data warehouse storage. It scales horizontally without requiring expensive provisioned storage.
 - **Decoupled Compute Scaling:** Spark and Trino compute resources scale independently from storage. Compute nodes can be adjusted based on workload demand (e.g., heavy reporting windows), preventing over-provisioning.
@@ -145,21 +142,38 @@ docker exec -it spark \
 - **Lightweight Local Deployment:** Docker Compose enables cost-efficient development and testing environments without requiring dedicated infrastructure.
 
 ---
-# 7. Future Improvements
-1. Add more data sources. For instance, database or streaming ingestion like Kafka.
-2. Add CI/CD pipeline
-3. Introduce monitoring (Prometheus + Grafana)
-4. Send alert that collected from monitoring to team channel (ex. MSTeams)
+# 6. Future Improvements
+To evolve this platform toward a production-ready, enterprise-grade system, the following enhancements are recommended:
+1. Expand Data Ingestion Capabilities
+- Integrate additional batch sources (RDBMS, APIs, cloud storage).
+- Introduce real-time streaming ingestion using Apache Kafka or equivalent event streaming platforms.
+- Implement Change Data Capture (CDC) for incremental ingestion from operational databases.
+2. CI/CD & Infrastructure Automation
+- Introduce version-controlled deployment for safe environment promotion (dev -> staging -> prod).
+3. Observability & Monitoring
+- Use Grafana dashboards to monitor:
+  - Query latency
+  - ETL duration
+  - Resource utilization (CPU/Mem/IO)
+4. Alerting & Incident Management
+- Integrate alerting systems to notify engineering teams via:
+  - MSTeams
+  - Slack
+  - Email
+5. Data Governance & Optimization
+- Implement data quality checks using tools like Great Expectations.
+- Define retention period policies and automated snapshot expiration on Iceberg to save the storage costs.
+- Enable role-based access control (RBAC) for secure data access.
 
 ---
-# 8. Setup & Installation
+# 7. Setup & Installation
 1. Clone git repository
 ```sh
 git clone https://github.com/ChanAndKlee/iceberg-medallion-data-platform.git
 ```
 2. Run docker
 ```sh
-cd iceverg-platform
+cd iceberg-platform
 # Start docker container
 docker compose up -d
 docker ps
