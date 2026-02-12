@@ -19,7 +19,6 @@ A scalable Lakehouse architecture using Apache Iceberg, Spark, Trino, and Nessie
 - [6. Cost Awareness Justification](#6-cost-awareness-justification)
 - [7. Future Improvements](#7-future-improvements)
 - [8. Setup & Installation](#8-setup--installation)
-
 <!-- - [9. Versioning & Governance](#9-versioning--governance)
 - [10. Failure & Recovery Strategy](#10-failure--recovery-strategy) -->
 <!-- - [11. Future Improvements](#11-future-improvements) -->
@@ -72,7 +71,7 @@ This architecture ensures scalability, consistency, and cost efficiency.
 
 ## 2.3 Architecture Diagram
 
-<!-- ![Architecture](/iceberg-platform/image/architecture-design.png) -->
+![Architecture](/iceberg-platform/image/architecture-design.png)
 
 ---
 
